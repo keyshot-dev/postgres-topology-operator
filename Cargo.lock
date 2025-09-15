@@ -1395,6 +1395,7 @@ dependencies = [
  "pretty_env_logger",
  "rand 0.8.5",
  "rustls 0.21.12",
+ "rustls-pki-types",
  "schemars",
  "serde",
  "serde_json",

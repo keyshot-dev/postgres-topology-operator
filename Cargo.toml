@@ -30,6 +30,7 @@ rand = "0.8"
 sha2 = "0.10"
 stringprep = "0.1"
 rustls = "0.21.7"
+rustls-pki-types = "1.11.0"
 webpki-roots = "0.25.2"
 itertools = "0.12"
 base16ct = { version = "0.2.0", features = ["alloc", "std"] }

@@ -26,6 +26,7 @@ pub struct PostgresAdminConnectionSpec {
     pub database: String,
     pub ssl_mode: PostgresSslMode,
     pub channel_binding: Option<ChannelBinding>,
+    pub custom_root_certificate: Option<String>,
 }
 
 

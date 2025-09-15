@@ -1,6 +1,8 @@
 use std::ops::{Deref, DerefMut};
-use anyhow::{bail};
+use anyhow::{bail, Context};
 use kube::Api;
+use rustls_pki_types::CertificateDer;
+use rustls_pki_types::pem::PemObject;
 use tokio::task::JoinHandle;
 use crate::types::{HasPostgresAdminConnection, PostgresAdminConnection, PostgresSslMode};
 
@@ -36,6 +38,19 @@ pub async fn get_postgres_connection(res: &impl HasPostgresAdminConnection, kube
                 )
             })
     );
+
+    if let Some(custom_cert) = &admin_conn.custom_root_certificate {
+        let certs = CertificateDer::pem_slice_iter(custom_cert.as_bytes());
+        let mut cert_list = vec![];
+        for rel in certs {
+            let cert = rel.with_context(|| "Failed to parser certificate")?;
+            cert_list.push(cert);
+        }
+        let (added, ignored) = root_store.add_parsable_certificates(&cert_list);
+        
+        info!("Added {added} custom certificates, while ignoring {ignored}");
+    }
+
 
     let tls_config = rustls::ClientConfig::builder()
         .with_safe_defaults()
