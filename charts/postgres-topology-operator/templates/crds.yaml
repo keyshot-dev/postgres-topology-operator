@@ -116,6 +116,9 @@ spec:
                 - Require
                 nullable: true
                 type: string
+              customRootCertificate:
+                nullable: true
+                type: string
               database:
                 type: string
               host:

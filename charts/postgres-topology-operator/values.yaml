@@ -2,7 +2,7 @@ operator:
   enable: true
   imagePullPolicy: Always
   image: digizuite.azurecr.io/digizuite/postgres-topology-operator:master
-  imagePullSecret: ""
+  imagePullSecret: "regcreds"
   resources:
     limits:
       cpu: 100m
