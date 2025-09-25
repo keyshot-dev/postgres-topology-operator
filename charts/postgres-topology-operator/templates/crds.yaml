@@ -116,6 +116,20 @@ spec:
                 - Require
                 nullable: true
                 type: string
+              clientCertificateAuthorization:
+                nullable: true
+                properties:
+                  clientCertificate:
+                    type: string
+                  clientKey:
+                    type: string
+                  rootCertificate:
+                    type: string
+                required:
+                - clientCertificate
+                - clientKey
+                - rootCertificate
+                type: object
               customRootCertificate:
                 nullable: true
                 type: string
@@ -124,6 +138,7 @@ spec:
               host:
                 type: string
               password:
+                nullable: true
                 oneOf:
                 - required:
                   - plain
@@ -160,7 +175,6 @@ spec:
             required:
             - database
             - host
-            - password
             - port
             - sslMode
             - username

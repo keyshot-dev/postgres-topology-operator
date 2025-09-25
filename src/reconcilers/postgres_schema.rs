@@ -53,7 +53,13 @@ async fn run_reconciler(resource: Arc<PostgresSchema>, context: Arc<ContextData>
 
     let schema = &resource.spec.schema;
 
-    match (pg_connection.query_opt("SELECT schema_owner from information_schema.schemata where schema_name = $1", &[&schema]).await?, owner_name) {
+    match (pg_connection.query_opt(r#"
+        SELECT
+          r.rolname AS schema_owner
+        FROM pg_catalog.pg_namespace AS n
+        JOIN pg_catalog.pg_roles AS r ON n.nspowner = r.oid
+        WHERE n.nspname = $1;
+    "#, &[&schema]).await?, owner_name) {
         (Some(_), None) => {
             info!("Schema {} already exists with specific owner", schema);
         },

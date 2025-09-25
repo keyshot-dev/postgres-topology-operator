@@ -22,11 +22,12 @@ pub struct PostgresAdminConnectionSpec {
     pub host: String,
     pub port: u16,
     pub username: String,
-    pub password: PostgresPassword,
+    pub password: Option<PostgresPassword>,
     pub database: String,
     pub ssl_mode: PostgresSslMode,
     pub channel_binding: Option<ChannelBinding>,
     pub custom_root_certificate: Option<String>,
+    pub client_certificate_authorization: Option<PostgresAdminConnectionTlsAuth>,
 }
 
 
@@ -49,6 +50,14 @@ impl ChannelBinding {
             ChannelBinding::Require => tokio_postgres::config::ChannelBinding::Prefer,
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct PostgresAdminConnectionTlsAuth {
+    pub root_certificate: String,
+    pub client_certificate: String,
+    pub client_key: String,
 }
 
 
