@@ -27,7 +27,19 @@ async fn run_reconciler(resource: Arc<PostgresRole>, context: Arc<ContextData>) 
             info!("Role {} does not exist", resource.spec.role);
         } else {
             info!("Dropping role {}", resource.spec.role);
-            pg_connection.execute(&format!("REVOKE ALL PRIVILEGES ON DATABASE {} FROM {}", pg_connection.database, resource.spec.role), &[]).await?;
+            match pg_connection.execute(&format!("REVOKE ALL PRIVILEGES ON DATABASE {} FROM {} CASCADE", pg_connection.database, resource.spec.role), &[]).await {
+                Ok(_) => {},
+                Err(e) => {
+                    warn!("Failed to revoke privileges on database {} from {}: {}", pg_connection.database, resource.spec.role, e);
+
+                    match pg_connection.execute(&format!("REVOKE ALL PRIVILEGES ON DATABASE {} FROM {}", pg_connection.database, resource.spec.role), &[]).await {
+                        Ok(_) => {},
+                        Err(e) => {
+                            warn!("Failed to revoke privileges on database {} from {} (Without cascade). Hoping the actual delete will work anyway.: {}", pg_connection.database, resource.spec.role, e);
+                        }
+                    }
+                }
+            }
             pg_connection.execute(&format!("DROP OWNED BY {} CASCADE", resource.spec.role), &[]).await?;
             pg_connection.execute(&format!("DROP ROLE {}", resource.spec.role), &[]).await?;
             info!("Dropped role {}", resource.spec.role);
