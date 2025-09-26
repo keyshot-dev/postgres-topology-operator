@@ -100,6 +100,13 @@ async fn run_reconciler(resource: Arc<PostgresRole>, context: Arc<ContextData>) 
         info!("Granting {username} to admin user");
         pg_connection.execute(&format!("GRANT {} TO {}", username, pg_connection.admin_username), &[]).await?;
     }
+    
+    if let Some(extra_roles) = &resource.spec.extra_roles {
+        for extra_role in extra_roles {
+            info!("Granting extra role {extra_role} to {username}");
+            pg_connection.execute(&format!("GRANT {} TO {}", extra_role, username), &[]).await?;
+        }
+    }
 
     info!("Granting connect to {} to database {}", username, pg_connection.database);
     pg_connection.execute(&format!("GRANT CONNECT ON DATABASE {} TO {}", pg_connection.database, username), &[]).await?;

@@ -23,6 +23,8 @@ pub struct PostgresRoleSpec {
     pub register_in_pg_bouncer: Option<PgBouncerReference>,
     pub grant_role_to_admin_user: Option<bool>,
     pub connection: PostgresAdminConnectionReference,
+    /// Any extra roles to grant this role, e.g. "admin"
+    pub extra_roles: Option<Vec<String>>,
 }
 
 impl HasPostgresAdminConnection for PostgresRole {

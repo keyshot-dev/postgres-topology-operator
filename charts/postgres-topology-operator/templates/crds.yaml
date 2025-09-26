@@ -224,6 +224,12 @@ spec:
                 required:
                 - name
                 type: object
+              extraRoles:
+                description: Any extra roles to grant this role, e.g. "admin"
+                items:
+                  type: string
+                nullable: true
+                type: array
               grantRoleToAdminUser:
                 nullable: true
                 type: boolean
