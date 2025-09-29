@@ -154,8 +154,10 @@ fn error_policy<TResource>(
         Clone + Resource + CustomResourceExt + DeserializeOwned + Debug + Send + Sync + 'static,
 {
     error!(
-        "Reconciliation error while reconciling type {}:\n{:?}.\n{:?}",
+        "Reconciliation error while reconciling type {}: {:?} in {:?}\n{:?}.\n{:?}",
         TResource::crd_name(),
+        echo.meta().name,
+        echo.meta().namespace,
         error,
         echo
     );

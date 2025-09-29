@@ -214,6 +214,12 @@ spec:
         properties:
           spec:
             properties:
+              configurationParameters:
+                additionalProperties:
+                  type: string
+                description: Extra configuration parameters to set for this role. If a parameter is removed from this list later on, it will be reset to the default value.
+                nullable: true
+                type: object
               connection:
                 properties:
                   name:
@@ -273,6 +279,11 @@ spec:
           status:
             nullable: true
             properties:
+              configurationParameters:
+                additionalProperties:
+                  type: string
+                nullable: true
+                type: object
               encodedPassword:
                 nullable: true
                 properties:

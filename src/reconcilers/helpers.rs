@@ -101,8 +101,8 @@ pub async fn get_postgres_connection(
     }
 
     #[cfg(debug_assertions)]
-    if admin_conn.host == "cockroachdb-public.cockroach-ns.svc.cluster.local" {
-        connection_config.hostaddr("100.90.224.103".parse().expect("Invalid ipv4 address"));
+    if admin_conn.host == "cockroachdb-public.northeurope.svc.cluster.local" {
+        connection_config.hostaddr("100.71.138.13".parse().expect("Invalid ipv4 address"));
     }
 
     let (client, connection) = connection_config.connect(tls).await?;

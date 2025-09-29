@@ -1,3 +1,4 @@
+use std::collections::{HashMap};
 use kube::CustomResource;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -25,6 +26,10 @@ pub struct PostgresRoleSpec {
     pub connection: PostgresAdminConnectionReference,
     /// Any extra roles to grant this role, e.g. "admin"
     pub extra_roles: Option<Vec<String>>,
+
+    /// Extra configuration parameters to set for this role. If a parameter is removed from this list
+    /// later on, it will be reset to the default value.
+    pub configuration_parameters: Option<HashMap<String, String>>,
 }
 
 impl HasPostgresAdminConnection for PostgresRole {
@@ -37,6 +42,7 @@ impl HasPostgresAdminConnection for PostgresRole {
 #[serde(rename_all = "camelCase")]
 pub struct PostgresRoleStatus {
     pub encoded_password: Option<StatusEncodedPassword>,
+    pub configuration_parameters: Option<HashMap<String, String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, JsonSchema)]
