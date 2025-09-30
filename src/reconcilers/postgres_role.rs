@@ -77,12 +77,17 @@ async fn run_reconciler(
                     }
                 }
             }
-            pg_connection
+            match pg_connection
                 .execute(
                     &format!("DROP OWNED BY {} CASCADE", resource.spec.role),
                     &[],
                 )
-                .await?;
+                .await {
+                Ok(_) => {}
+                Err(e) => {
+                    warn!("Failed to drop ownership for {}: {}, trying to go forward anywhere", resource.spec.role, e);
+                }
+            };
             pg_connection
                 .execute(&format!("DROP ROLE {}", resource.spec.role), &[])
                 .await?;

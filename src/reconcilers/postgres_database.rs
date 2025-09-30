@@ -66,7 +66,7 @@ async fn run_reconciler(resource: Arc<PostgresDatabase>, context: Arc<ContextDat
             let current_owner: &str = database_owner.get(0);
             if current_owner != owner_name {
                 info!("Changing database {} owner from {} to {}", database, current_owner, owner_name);
-                pg_connection.execute(&format!("ALTER DATABASE {} OWNER TO {}", database, owner_name), &[]).await?;
+                pg_connection.execute(&format!("ALTER DATABASE {} OWNER = {}", database, owner_name), &[]).await?;
                 info!("Database {} owner changed to {}", database, owner_name);
             } else {
                 info!("Database {} already exists with owner {}", database, owner_name);
