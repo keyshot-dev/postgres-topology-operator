@@ -53,6 +53,7 @@ rules:
       - postgres.digizuite.com
     resources:
       - postgresschemas
+      - postgresdatabases
       - postgresadminconnections
       - postgresroles
       - pgbouncers
@@ -70,6 +71,7 @@ rules:
       - postgres.digizuite.com
     resources:
       - postgresschemas/finalizers
+      - postgresdatabases/finalizers
       - postgresadminconnections/finalizers
       - postgresroles/finalizers
       - pgbouncers/finalizers
@@ -82,6 +84,7 @@ rules:
       - postgres.digizuite.com
     resources:
       - postgresschemas/status
+      - postgresdatabases/status
       - postgresadminconnections/status
       - postgresroles/status
       - pgbouncers/status

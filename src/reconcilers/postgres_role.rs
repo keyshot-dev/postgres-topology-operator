@@ -226,12 +226,17 @@ async fn run_reconciler(
                 param, value, username
             );
             let safe = value.replace("'", "''");
-            pg_connection
+            match pg_connection
                 .execute(
                     &format!("ALTER ROLE {} SET {} TO '{}'", username, param, safe),
                     &[],
                 )
-                .await?;
+                .await {
+                Ok(_) => {},
+                Err(e) => {
+                    warn!("Failed to set configuration parameter {} to {} for role {}: {}", param, value, username, e);
+                }
+            }
         }
     }
 
