@@ -26,6 +26,10 @@ spec:
             properties:
               connection:
                 properties:
+                  database:
+                    description: Optional database to connect to. If not set, the "database" field from the referenced PostgresAdminConnection will be used.
+                    nullable: true
+                    type: string
                   name:
                     type: string
                   namespace:
@@ -98,6 +102,10 @@ spec:
             properties:
               connection:
                 properties:
+                  database:
+                    description: Optional database to connect to. If not set, the "database" field from the referenced PostgresAdminConnection will be used.
+                    nullable: true
+                    type: string
                   name:
                     type: string
                   namespace:
@@ -294,6 +302,10 @@ spec:
                 type: object
               connection:
                 properties:
+                  database:
+                    description: Optional database to connect to. If not set, the "database" field from the referenced PostgresAdminConnection will be used.
+                    nullable: true
+                    type: string
                   name:
                     type: string
                   namespace:

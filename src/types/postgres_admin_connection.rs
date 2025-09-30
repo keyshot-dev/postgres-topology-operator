@@ -66,6 +66,8 @@ pub struct PostgresAdminConnectionTlsAuth {
 pub struct PostgresAdminConnectionReference {
     pub name: String,
     pub namespace: Option<String>,
+    /// Optional database to connect to. If not set, the "database" field from the referenced PostgresAdminConnection will be used.
+    pub database: Option<String>
 }
 
 

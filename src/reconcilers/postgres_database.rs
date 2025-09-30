@@ -16,7 +16,7 @@ async fn run_reconciler(resource: Arc<PostgresDatabase>, context: Arc<ContextDat
     info!("Reconciling postgres_database {:?}", resource.metadata.name);
 
     if resource.metadata.deletion_timestamp.is_some() {
-        info!("Deleting postgres role {:?}", resource.metadata.name);
+        info!("Deleting postgres database {:?}", resource.metadata.name);
 
         let pg_connection = get_postgres_connection(resource.as_ref(), context.kubernetes_client.clone()).await?;
 

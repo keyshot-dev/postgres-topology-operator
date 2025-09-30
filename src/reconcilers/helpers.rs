@@ -10,14 +10,14 @@ pub async fn get_postgres_connection(
     res: &impl HasPostgresAdminConnection,
     kubernetes_client: kube::Client,
 ) -> anyhow::Result<PostgresConnection> {
-    let admin_conn = res.get_connection();
+    let admin_conn_ref = res.get_connection();
 
     let ns = res.namespace().expect("Resource should be namespaced");
-    let ns = admin_conn.namespace.as_ref().unwrap_or(&ns);
+    let ns = admin_conn_ref.namespace.as_ref().unwrap_or(&ns);
 
     let api: Api<PostgresAdminConnection> = Api::namespaced(kubernetes_client, &ns);
 
-    let admin_conn = api.get_opt(&admin_conn.name).await?;
+    let admin_conn = api.get_opt(&admin_conn_ref.name).await?;
 
     let admin_conn = if let Some(admin_conn) = admin_conn {
         admin_conn.spec
@@ -74,6 +74,8 @@ pub async fn get_postgres_connection(
 
     let tls = tokio_postgres_rustls::MakeRustlsConnect::new(tls_config);
 
+    let db_name = admin_conn_ref.database.as_ref().unwrap_or(&admin_conn.database);
+    
     let mut connection_config = tokio_postgres::config::Config::new();
     connection_config
         .host(&admin_conn.host)
@@ -85,7 +87,7 @@ pub async fn get_postgres_connection(
                 .unwrap_or(crate::types::ChannelBinding::Disable)
                 .to_postgres_channel_binding(),
         )
-        .dbname(&admin_conn.database)
+        .dbname(db_name)
         .ssl_mode(match admin_conn.ssl_mode {
             PostgresSslMode::Disable => tokio_postgres::config::SslMode::Disable,
             PostgresSslMode::Allow | PostgresSslMode::Prefer => {
