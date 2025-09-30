@@ -4,12 +4,13 @@ mod postgres_role;
 mod pg_bouncer;
 mod pg_bouncer_database;
 mod pg_bouncer_user;
-
+mod postgres_database;
 
 use std::fmt::{Display, Formatter};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 pub use postgres_schema::*;
+pub use postgres_database::*;
 pub use postgres_admin_connection::*;
 pub use postgres_role::*;
 pub use pg_bouncer::*;

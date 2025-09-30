@@ -77,6 +77,78 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  name: postgresdatabases.postgres.digizuite.com
+spec:
+  group: postgres.digizuite.com
+  names:
+    categories: []
+    kind: PostgresDatabase
+    plural: postgresdatabases
+    shortNames: []
+    singular: postgresdatabase
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns: []
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Auto-generated derived type for PostgresDatabaseSpec via `CustomResource`
+        properties:
+          spec:
+            properties:
+              connection:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    nullable: true
+                    type: string
+                required:
+                - name
+                type: object
+              databaseOwner:
+                nullable: true
+                oneOf:
+                - required:
+                  - managedRole
+                - required:
+                  - name
+                properties:
+                  managedRole:
+                    properties:
+                      name:
+                        type: string
+                      namespace:
+                        nullable: true
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  name:
+                    type: string
+                type: object
+              name:
+                type: string
+            required:
+            - connection
+            - name
+            type: object
+          status:
+            nullable: true
+            type: object
+        required:
+        - spec
+        title: PostgresDatabase
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
   name: postgresadminconnections.postgres.digizuite.com
 spec:
   group: postgres.digizuite.com

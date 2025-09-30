@@ -23,7 +23,7 @@ use std::io::Write;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::task::JoinSet;
-use crate::types::{HasPgBouncerReference, PgBouncer, PgBouncerDatabase, PgBouncerUser, PostgresAdminConnection, PostgresRole, PostgresSchema};
+use crate::types::{HasPgBouncerReference, PgBouncer, PgBouncerDatabase, PgBouncerUser, PostgresAdminConnection, PostgresDatabase, PostgresRole, PostgresSchema};
 
 #[derive(Parser, Debug)]
 #[command(long_about = None)]
@@ -56,6 +56,7 @@ async fn main() -> anyhow::Result<()> {
     let related_pg_bouncer_users_api: Api<PgBouncerUser> = Api::all(kubernetes_client.clone());
     let postgres_roles_api: Api<PostgresRole> = Api::all(kubernetes_client.clone());
     let postgres_schemas_api: Api<PostgresSchema> = Api::all(kubernetes_client.clone());
+    let postgres_databases_api: Api<PostgresDatabase> = Api::all(kubernetes_client.clone());
 
     let deployments_api: Api<Deployment> = Api::all(kubernetes_client.clone());
     let services_api: Api<Service> = Api::all(kubernetes_client.clone());
@@ -100,6 +101,15 @@ async fn main() -> anyhow::Result<()> {
             }
         }));
 
+    tasks.spawn(Controller::new(postgres_databases_api.clone(), Config::default())
+        .run(reconcilers::postgres_database::reconcile_postgres_database, error_policy, context.clone())
+        .for_each(|res| async move {
+            match res {
+                Ok(o) => debug!("reconciled: {:?}", o),
+                Err(e) => error!("reconcile failed: {:?}", e),
+            }
+        }));
+
     info!("Operator tasks started");
 
     while let Some(res) = tasks.join_next().await {
@@ -116,6 +126,7 @@ fn write_crds() -> anyhow::Result<()> {
     let mut file = File::create(file_path)?;
 
     write_crd::<PostgresSchema>(&mut file)?;
+    write_crd::<PostgresDatabase>(&mut file)?;
     write_crd::<PostgresAdminConnection>(&mut file)?;
     write_crd::<PostgresRole>(&mut file)?;
     write_crd::<PgBouncer>(&mut file)?;
