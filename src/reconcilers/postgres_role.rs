@@ -28,6 +28,7 @@ async fn run_reconciler(resource: Arc<PostgresRole>, context: Arc<ContextData>) 
         } else {
             info!("Dropping role {}", resource.spec.role);
             pg_connection.execute(&format!("REVOKE ALL PRIVILEGES ON DATABASE {} FROM {} CASCADE", pg_connection.database, resource.spec.role), &[]).await?;
+            pg_connection.execute(&format!("DROP OWNED BY {} CASCADE", resource.spec.role), &[]).await?;
             pg_connection.execute(&format!("DROP ROLE {}", resource.spec.role), &[]).await?;
             info!("Dropped role {}", resource.spec.role);
         }
